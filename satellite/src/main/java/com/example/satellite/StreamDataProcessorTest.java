@@ -1,4 +1,6 @@
-package com.example.satellite.service;
+package com.example.satellite;
+
+import com.example.satellite.StreamDataProcessor;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

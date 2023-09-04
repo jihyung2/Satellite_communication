@@ -1,4 +1,4 @@
-package com.example.satellite.service;
+package com.example.satellite;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -8,7 +8,7 @@ import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
-@Service
+
 public class StreamDataProcessor {
     public void processData(InputStream inputStream) {
         try (DataInputStream dataInputStream = new DataInputStream(inputStream)) {

@@ -3,6 +3,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class StreamDataProcessor {
     public void processData(InputStream inputStream) {
@@ -24,6 +26,9 @@ public class StreamDataProcessor {
                         break;
                     case BINARY:
                         processBinaryData(dataInputStream);
+                        break;
+                    case JSON:
+                        processJSONData(dataInputStream);
                         break;
                     default:
                         System.out.println("Unknown data type: " + dataType);
@@ -58,6 +63,7 @@ public class StreamDataProcessor {
 
         // 추가적인 오디오 데이터 처리 로직 구현
     }
+
     public void processAsciiData(DataInputStream dataInputStream) throws IOException {
         String rawData = String.valueOf(dataInputStream);
         // ASCII 문자열 데이터 파싱 및 가공
@@ -72,12 +78,55 @@ public class StreamDataProcessor {
         }
         System.out.println("Received ASCII Data: " + resultBuilder.toString());
     }
+
     public void processBinaryData(DataInputStream dataInputStream) throws IOException {
 
         ByteBuffer buffer = ByteBuffer.wrap(dataInputStream.readAllBytes()); // 바이너리 데이터를 처리하는 BinaryDataProcessor 서비스 클래스
 
         // 바이너리 데이터 파싱 및 가공
         double sensorValue = buffer.getDouble();
+
+    }
+
+    public void processJSONData(DataInputStream dataInputStream) throws IOException {
+        try {
+            StringBuilder jsonDataBuilder = new StringBuilder();
+            String line;
+
+            // Read lines from the input stream and append them to the jsonDataBuilder
+            while ((line = dataInputStream.readUTF()) != null) {
+                jsonDataBuilder.append(line);
+            }
+
+            String jsonData = jsonDataBuilder.toString();
+
+            Map<String, Object> jsonMap = new HashMap<>();
+
+            // Remove leading/trailing whitespace and curly braces
+            if (jsonData.startsWith("{") && jsonData.endsWith("}")) {
+                jsonData = jsonData.substring(1, jsonData.length() - 1);
+            }
+
+            // Split the data into key-value pairs
+            String[] keyValuePairs = jsonData.split(",");
+
+            // Process each key-value pair
+            for (String pair : keyValuePairs) {
+                String[] keyValue = pair.split(":");
+
+                if (keyValue.length == 2) {
+                    String key = keyValue[0].trim().replaceAll("\"", "");
+                    String value = keyValue[1].trim();
+
+                    jsonMap.put(key, value);
+                }
+            }
+
+            // Print the processed data
+            System.out.println(jsonMap);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
