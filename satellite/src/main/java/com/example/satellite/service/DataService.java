@@ -13,7 +13,7 @@ public class DataService {
     }
 
     public String readDataFromSerial() {
+
         return serialReader.readData(); // 실제 시리얼 포트에서 데이터 읽기.
     }
-
 }
