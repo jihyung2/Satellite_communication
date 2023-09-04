@@ -18,7 +18,7 @@ public class DataController {
 
     @GetMapping("/read")
     public String readData() {
-        return dataService.readDataFromSerial();
+        return dataService.readAndProcessDataFromSerial();
     }
 
 }
