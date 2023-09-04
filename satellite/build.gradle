@@ -24,11 +24,15 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.modulith:spring-modulith-starter-core'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.modulith:spring-modulith-starter-test'
+    implementation 'com.pi4j:pi4j-core:1.2'
+    implementation 'com.fazecast:jSerialComm:2.6.2'
+
 }
 
 dependencyManagement {

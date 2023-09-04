@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Data Display</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+<body>
+
+<h2>Data from Raspberry Pi:</h2>
+
+<p id="data"></p>
+
+<script>
+    $(document).ready(function() {
+        $.get("/api/data/read", function(data) {
+            $("#data").html(data);
+        });
+    });
+</script>
+
+</body>
+</html>
