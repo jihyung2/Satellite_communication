@@ -33,6 +33,13 @@ dependencies {
     implementation 'com.pi4j:pi4j-core:1.2'
     implementation 'com.fazecast:jSerialComm:2.6.2'
     implementation 'org.json:json:20210307'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    // Thymeleaf
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
+    // Chart.js
+    implementation 'org.webjars.npm:chart.js:3.5.1'
 }
 
 dependencyManagement {

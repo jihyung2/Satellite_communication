@@ -52,7 +52,6 @@ public class StreamDataProcessor {
         // 이미지 데이터 처리 로직 수행
         System.out.println("Received Image Data: " + Arrays.toString(imageData));
 
-        // 추가적인 이미지 데이터 처리 로직 구현
     }
 
     private void processAudio(DataInputStream dataInputStream) throws IOException {
@@ -64,7 +63,6 @@ public class StreamDataProcessor {
         // 오디오 데이터 처리 로직 수행
         System.out.println("Received Audio Data: " + Arrays.toString(audioData));
 
-        // 추가적인 오디오 데이터 처리 로직 구현
     }
     public void processAsciiData(DataInputStream dataInputStream) throws IOException {
         String rawData = String.valueOf(dataInputStream);

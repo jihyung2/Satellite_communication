@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Sensor Data</title>
+
+    <!-- CSS only -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+
+    <!-- JS, Popper.js, jQuery, and Chart.js -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.5.1/dist/chart.min.js"></script>
+
+    <!-- SockJS and STOMP JavaScript libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
+</head>
+<body>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <h1 class="text-center">Sensor Data</h1>
+            <!-- Add canvas element for the chart -->
+            <canvas id='chart' width='400' height='200'></canvas>
+            Sensor Value: <span id='sensorValueSpan'></span>
+        </div>
+    </div>
+</div>
+
+<script th:inline='javascript'>
+    /*<![CDATA[*/
+
+    // Create a chart context using the canvas element
+    var ctx = document.getElementById('chart').getContext('2d');
+
+    // Create an empty line chart
+    var chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Sensor Value',
+                data: [],
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0,
+            }]
+        },
+        options: {}
+    });
+
+    // Establish a WebSocket connection with SockJS and STOMP
+    var socket = new SockJS('/api/data/read');// Change to your WebSocket endpoint
+    var stompClient = Stomp.over(socket);
+
+    stompClient.connect({}, function () {
+        stompClient.subscribe('/topic/sensor-data', function (event) {
+            var data = JSON.parse(event.body);
+
+            // Get the sensor value from the received data.
+            var sensorValue = data.value;
+
+            // Update the span element with the sensor value.
+            document.getElementById('sensorValueSpan').textContent = sensorValue;
+
+            // Add a new label with current time to the chart's labels array.
+            chart.data.labels.push(new Date().toLocaleTimeString());
+
+            // Add a new data point to the chart's datasets array.
+            chart.data.datasets[0].data.push(sensorValue);
+
+            // Limit number of displayed labels and data points (e.g., show only last N values).
+            const maxDataPoints = 10;
+            if (chart.data.labels.length > maxDataPoints) {
+                chart.data.labels.shift();
+                chart.data.datasets[0].data.shift();
+            }
+
+            // Update and re-render the chart.
+            chart.update();
+        });
+    });
+
+    /*]]>*/
+</script>
+
+</body>
+</html>
