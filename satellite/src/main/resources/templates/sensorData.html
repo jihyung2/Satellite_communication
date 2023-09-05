@@ -30,6 +30,15 @@
     </div>
 </div>
 
+<table id="sensorDataTable" class="table">
+    <thead>
+    <tr>
+        <th>Time</th>
+        <th>Sensor Value</th>
+    </tr>
+    </thead>
+    <tbody></tbody> <!-- 여기에 실시간 데이터가 추가될 것입니다. -->
+</table>
 <script th:inline='javascript'>
     /*<![CDATA[*/
 
@@ -42,7 +51,7 @@
         data: {
             labels: [],
             datasets: [{
-                label: 'Sensor Value',
+                label: 'Random Sensor Value',
                 data: [],
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0,
@@ -82,7 +91,40 @@
             chart.update();
         });
     });
+    stompClient.connect({}, function () {
+        stompClient.subscribe('/topic/sensor-data', function (event) {
+            var data = JSON.parse(event.body);
 
+            // Get the sensor value from the received data.
+            var sensorValue = data.value;
+
+            // Update the span element with the sensor value.
+            document.getElementById('sensorValueSpan').textContent = sensorValue;
+
+            // Add a new label with current time to the chart's labels array.
+            var currentTime = new Date().toLocaleTimeString();
+            chart.data.labels.push(currentTime);
+
+            // Add a new data point to the chart's datasets array.
+            chart.data.datasets[0].data.push(sensorValue);
+
+            // Limit number of displayed labels and data points (e.g., show only last N values).
+            const maxDataPoints = 10;
+            if (chart.data.labels.length > maxDataPoints) {
+                chart.data.labels.shift();
+                chart.data.datasets[0].data.shift();
+            }
+
+            // Update and re-render the chart.
+            chart.update();
+
+            // Add a new row to the table with current time and sensor value
+            var tableBody = document.getElementById('sensorDataTable').getElementsByTagName('tbody')[0];
+            var newRow   = tableBody.insertRow();
+            newRow.insertCell(0).appendChild(document.createTextNode(currentTime));
+            newRow.insertCell(1).appendChild(document.createTextNode(sensorValue));
+        });
+    });
     /*]]>*/
 </script>
 
