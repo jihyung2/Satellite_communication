@@ -1,4 +1,5 @@
 import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -7,20 +8,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class StreamDataProcessor {
-    public void processData(InputStream inputStream) {
-        try (DataInputStream dataInputStream = new DataInputStream(inputStream)) {
-            while (true) {
-                // 데이터 유형 판별
-                DataType dataType = DataType.valueOf(dataInputStream.readUTF());
+    public void processData(InputStream inputStream) throws IOException {
+        DataInputStream dataInputStream = new DataInputStream(inputStream);
+        while (true) {
 
-                // 해당 데이터 유형에 따른 처리 로직 수행
+                // 데이터 유형 판별
+                String dataTypeString = dataInputStream.readUTF();
+                DataType dataType = DataType.valueOf(dataTypeString);
+                System.out.println(dataType);
+
+                // 데이터 유형에 따른 처리 로직 수행
+                if (dataType == DataType.END) {
+                    break; // 데이터의 끝을 나타내는 경우 반복문 종료
+                }
+
                 switch (dataType) {
-                    case IMAGE:
-                        processImage(dataInputStream);
-                        break;
-                    case AUDIO:
-                        processAudio(dataInputStream);
-                        break;
                     case ASCII:
                         processAsciiData(dataInputStream);
                         break;
@@ -34,107 +36,43 @@ public class StreamDataProcessor {
                         System.out.println("Unknown data type: " + dataType);
                         break;
                 }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+
         }
     }
 
-    private void processImage(DataInputStream dataInputStream) throws IOException {
-        int imageSize = dataInputStream.readInt();
-
-        byte[] imageData = new byte[imageSize];
-        dataInputStream.readFully(imageData);
-
-        // 이미지 데이터 처리 로직 수행
-        System.out.println("Received Image Data: " + Arrays.toString(imageData));
-
-        // 추가적인 이미지 데이터 처리 로직 구현
-    }
-
-    private void processAudio(DataInputStream dataInputStream) throws IOException {
-        int audioSize = dataInputStream.readInt();
-
-        byte[] audioData = new byte[audioSize];
-        dataInputStream.readFully(audioData);
-
-        // 오디오 데이터 처리 로직 수행
-        System.out.println("Received Audio Data: " + Arrays.toString(audioData));
-
-        // 추가적인 오디오 데이터 처리 로직 구현
-    }
-
     public void processAsciiData(DataInputStream dataInputStream) throws IOException {
-        String rawData = String.valueOf(dataInputStream);
+        String rawData = dataInputStream.readUTF(); // ASCII 데이터 읽기
         // ASCII 문자열 데이터 파싱 및 가공
         String[] parts = rawData.split(",");
-
-        // String Builer는 문자열을 연결해줌
         StringBuilder resultBuilder = new StringBuilder();
         for (String part : parts) {
-            int asciiValue = Integer.parseInt(part); //(아스키코드)문자열로 표현된 숫자를 정수로 변환
-            char character = (char) asciiValue; // char 캐스팅 연산자를 사용하여 정수값을 해당하는 ASCII 문자로 변환
+            int asciiValue = Integer.parseInt(part);
+            char character = (char) asciiValue;
             resultBuilder.append(character);
         }
         System.out.println("Received ASCII Data: " + resultBuilder.toString());
     }
 
     public void processBinaryData(DataInputStream dataInputStream) throws IOException {
-
-        ByteBuffer buffer = ByteBuffer.wrap(dataInputStream.readAllBytes()); // 바이너리 데이터를 처리하는 BinaryDataProcessor 서비스 클래스
-
-        // 바이너리 데이터 파싱 및 가공
-        double sensorValue = buffer.getDouble();
-
+        double sensorValue = dataInputStream.readDouble(); // 바이너리 데이터 읽기
+        System.out.println("Received Binary Data: " + sensorValue);
     }
 
     public void processJSONData(DataInputStream dataInputStream) throws IOException {
-        try {
-            StringBuilder jsonDataBuilder = new StringBuilder();
-            String line;
-
-            // Read lines from the input stream and append them to the jsonDataBuilder
-            while ((line = dataInputStream.readUTF()) != null) {
-                jsonDataBuilder.append(line);
-            }
-
-            String jsonData = jsonDataBuilder.toString();
-
-            Map<String, Object> jsonMap = new HashMap<>();
-
-            // Remove leading/trailing whitespace and curly braces
-            if (jsonData.startsWith("{") && jsonData.endsWith("}")) {
-                jsonData = jsonData.substring(1, jsonData.length() - 1);
-            }
-
-            // Split the data into key-value pairs
-            String[] keyValuePairs = jsonData.split(",");
-
-            // Process each key-value pair
-            for (String pair : keyValuePairs) {
-                String[] keyValue = pair.split(":");
-
-                if (keyValue.length == 2) {
-                    String key = keyValue[0].trim().replaceAll("\"", "");
-                    String value = keyValue[1].trim();
-
-                    jsonMap.put(key, value);
-                }
-            }
-
-            // Print the processed data
-            System.out.println(jsonMap);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
+        String jsonData = dataInputStream.readUTF(); // JSON 데이터 읽기
+        // JSON 데이터 파싱
+        // 여기서 JSON 파서를 사용하여 파싱하는 코드를 추가해야 합니다.
+        System.out.println("Received JSON Data: " + jsonData);
     }
+
+    // 나머지 메서드(processImage, processAudio)도 유사하게 수정해야 할 수 있습니다.
 
     private enum DataType {
         IMAGE,
         AUDIO,
         ASCII,
         BINARY,
-        JSON
+        JSON,
+        END // 데이터의 끝을 나타내는 값 추가
     }
 }
