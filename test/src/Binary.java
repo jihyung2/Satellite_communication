@@ -8,7 +8,7 @@ public class Binary {
         ByteBuffer buffer = ByteBuffer.wrap(data);
 
         // 바이너리 데이터 파싱 및 가공
-        double sensorValue = buffer.getShort();
+        double sensorValue = buffer.getShort();.
 
         System.out.println("Received Sensor Value: " + sensorValue);
 
