@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>캔위성 지상국</title>
+    <link rel="stylesheet" href="styles.css">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+        }
+
+        .left-column, .right-column {
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        .left-column {
+            flex-basis: 60%;
+        }
+
+        .right-column {
+            flex-basis: 38%;
+        }
+
+        h2 {
+            font-size: 20px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        #dataList {
+            list-style: none;
+            padding: 0;
+        }
+
+        #dataList li {
+            margin-bottom: 5px;
+            color: #666;
+        }
+
+        #settingbox {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        #settingbox h2 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        #settingbox label {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #444;
+        }
+
+        #settingInput, #settingInput2 {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        #settingInput::placeholder, #settingInput2::placeholder {
+            color: #999;
+        }
+
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="left-column">
+        <!-- 캔위성 위치 사진 -->
+        <img id="satelliteImage" src="satellite_image.jpg" alt="캔위성 위치 사진">
+        <!-- 캔위성 GPS 위치 정보 표시 -->
+        <div id="satelliteGPSInfo">
+            <h2>캔위성 GPS 정보</h2>
+            <p>ID: <span id="CansatID"></span></p>
+            <p>UTC time: <span id="CansatUTCtime"></span></p>
+            <p>Latitude(위도): <span id="CansatLatitude"></span></p>
+            <p>Longitude(경도): <span id="CansatLongitude"></span></p>
+            <p>Altitude(고도): <span id="CansatAltitude"></span></p>
+        </div>
+        <!-- 기준 GPS 정보 표시 -->
+        <div id="standardGPSInfo">
+            <h2>캔위성 GPS 정보</h2>
+            <p>ID: <span id="standardID"></span></p>
+            <p>UTC time: <span id="standardUTCtime"></span></p>
+            <p>Latitude(위도): <span id="standardLatitude"></span></p>
+            <p>Longitude(경도): <span id="standardLongitude"></span></p>
+            <p>Altitude(고도): <span id="standardAltitude"></span></p>
+        </div>
+    </div>
+
+    <div class="right-column">
+        <!-- 캔위성 데이터 -->
+        <div id="gpsInfo">
+            <h2>기준과 캔위성의 거리차이</h2>
+            <p>Range: <span id="Range"></span></p>
+            <p>DiffA: <span id="DiffA"></span></p>
+            <p>DiffO: <span id="DiffO"></span></p>
+            <p>DiffR: <span id="DiffR"></span></p>
+        </div>
+
+        <div id="satelliteData">
+            <h2>캔위성 데이터</h2>
+            <p>수신 데이터1: <span id="Recivedata1"></span></p>
+            <p>수신 데이터2: <span id="Recivedata2"></span></p>
+            <p>수신 데이터3: <span id="Recivedata3"></span></p>
+            <p>수신 데이터4: <span id="Recivedata4"></span></p>
+        </div>
+        <!-- 캔위성에서 보낸 사진 -->
+        <img id="satellitePhoto" src="satellite_photo.jpg" alt="캔위성에서 보낸 사진">
+    </div>
+    <div class="bottom-nav">
+        <button class="btn"  onclick="toggleSettingBox()">Setting</button>
+    </div>
+</div>
+<div id="settingbox">
+    <h2>Settings</h2>
+    <label for="settingInput">Setting 1:</label>
+    <input type="text" id="settingInput" class="form-control" placeholder="Enter setting 1">
+    <label for="settingInput2">Setting 2:</label>
+    <input type="text" id="settingInput2" class="form-control" placeholder="Enter setting 2">
+    <button onclick="applySettings()" class="btn">Apply</button>
+</div>
+<script>
+    let isSettingBoxVisible = false;
+
+    function toggleSettingBox() {
+        const settingBox = document.getElementById("settingbox");
+        isSettingBoxVisible = !isSettingBoxVisible;
+        if (isSettingBoxVisible) {
+            settingBox.style.display = "block";
+        } else {
+            settingBox.style.display = "none";
+        }
+    }
+
+    function applySettings() {
+        const setting1 = document.getElementById("settingInput").value;
+        const setting2 = document.getElementById("settingInput2").value;
+
+        // 여기에서 설정을 적용하거나 처리하는 코드를 추가합니다.
+        // 예를 들어, 설정을 서버에 보내고 저장할 수 있습니다.
+
+        // 설정을 적용한 후 settingbox를 다시 숨깁니다.
+        toggleSettingBox();
+    }
+</script>
+</body>
+</html>
