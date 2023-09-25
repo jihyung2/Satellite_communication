@@ -93,3 +93,40 @@ HTML + JavaScript 클라이언트 사이드 코드
 웹 페이지에서 /api/data/read API 호출 결과를 가져와 화면에 표시합니다.
 
 결국, 이 모든 코드들은 라즈베리파이의 시리얼 포트에서 데이터를 읽어와 웹 페이지에 표시하는 전체적인 작업 흐름을 구현한 것입니다.
+
+### 데이터베이스 연결 ( Spring Boot ) 
+Spring Boot에 JDBC를 통해 mysql or mariadb를 사용하기
+Dependency와 application.properties에 간단한 설정만 하면 MyBatis 및 MariaDB 연결은 완료된다.
+
+#### Dependency 추가
+implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.2' // 버전은 스프링부트에 맞춰서 사용
+implementation 'mysql:mysql-connector-java:8.0.33' // mysql일 경우
+implementation 'org.mariadb.jdbc:mariadb-java-client:3.1.4' //mariadb의 경우
+
+#### MyBatis란?
+개발자가 지정한 SQL, Procedure, 기타 등등 매핑을 지원하는 프레임워크
+JDBC로 처리하는 상당 부분의 코드, parameter settings, result등을 매핑하도록 도와준다.
+
+#### MyBatis-Spring
+MyBatis-Spring 라이브러리를 통해 MyBatis가 Spring Transaction에 쉽게 연동될 수 있다.
+Mapper와 SqlSession을 다루고, 다른 Bean에 주입시켜주며, Mybatis Exception을 Spirng DataAccessException으로 변환시켜준다.
+
+#### application.properties에 추가
+* 주의 * 깃허브 등록시 이 파일은 ignore로 올리지 않아야함
+   
+spring.datasource.driverClassName=org.mysql.cj.jdbc.Driver
+spring.datasource.url=jdbc:mysql://localhost:3306/test?characterEncoding=UTF-8&serverTimezone=UTC
+spring.datasource.username=스키마계정
+spring.datasource.password=비밀번호
+
+mariadb
+#spring.datasource.driverClassName=org.mariadb.jdbc.Driver
+#spring.datasource.url=jdbc:mariadb://localhost:3306/test?characterEncoding=UTF-8&serverTimezone=UTC
+
+oracle
+#spring.datasource.driverClassName=net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+spring.datasource.url=jdbc:log4jdbc:oracle:thin:@localhost:1532/test
+
+#### Mapper 추가
+1) mapper.xml 템플릿 생성
+2) 
