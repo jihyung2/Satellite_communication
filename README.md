@@ -129,4 +129,5 @@ spring.datasource.url=jdbc:log4jdbc:oracle:thin:@localhost:1532/test
 
 #### Mapper 추가
 1) mapper.xml 템플릿 생성
-2) 
+
+https://goddaehee.tistory.com/205
