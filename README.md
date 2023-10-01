@@ -131,3 +131,8 @@ spring.datasource.url=jdbc:log4jdbc:oracle:thin:@localhost:1532/test
 1) mapper.xml 템플릿 생성
 
 https://goddaehee.tistory.com/205
+
+#### 진행상황
+1. 모듈이 도착하면 코딩 마무리 짓기
+2. 데이터 타입 확인 후 데이터 원하는 방향으로 처리해주기 (필요)
+   
