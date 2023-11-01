@@ -139,4 +139,24 @@ https://goddaehee.tistory.com/205
 ### 피드백
 마이크로소프트 아키텍처 형태로 재사용성 가능한 방향으로 제작하기
 1. json 형태의 룰베이스로 생각중
-   
+
+
+
+SD1000U
+
+https://item.gmarket.co.kr/Item?goodscode=242928720
+
+
+시리얼 포트 확인 ls /dev/cu.*
+-> /dev/cu.usbserial-A10NLRJC
+
+아래 명령어로 시리얼 포트와 통신을 시작할 수 있음
+여기로 데이터가 들어오고 이걸 이제 rest api서버에서 읽어들이는 방식으로 지상국을 구현하면 될거같음
+->screen /dev/cu.usbserial-A10NLRJC 9600
+
+스크린으로 들어가면 
+-> AT+btinfo? 로 입력했을때 
+0001959AC736,SD1000Uv2.0.3-9AC736,MODE0,STANDBY,0,0,NoFC
+라는 값이 나오면 정상 포트로 정상적으로 접근성공
+
+
